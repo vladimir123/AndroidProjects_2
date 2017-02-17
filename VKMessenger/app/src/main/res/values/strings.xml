@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">VKMessenger</string>
+    <string name="no_connection">You don\'t have Internet enabled!</string>
+    <string name="no_connection_title">Internet access</string>
+    <string name="settings_button_text">Ok</string>
+    <string name="cancel_button_text">Cancel</string>
+    <integer name="com_vk_sdk_AppId">5586777</integer>
+</resources>

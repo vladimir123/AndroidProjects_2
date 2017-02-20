@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">VKSearch</string>
+    <integer name="com_vk_sdk_AppId">5886074</integer>
+</resources>

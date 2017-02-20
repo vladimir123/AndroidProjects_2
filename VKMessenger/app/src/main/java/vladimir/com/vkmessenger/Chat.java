@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -13,12 +15,17 @@ import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.methods.VKApiMessages;
+import com.vk.sdk.api.model.VKApiChat;
+import com.vk.sdk.api.model.VKApiMessage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Created by gavriluks on 06.09.2016.
@@ -28,15 +35,18 @@ public class Chat extends Activity {
     private JSONObject jObj_Out, respObj, object;
     private JSONArray itemArr;
 
-    private String vkUID;
+//    private String vkUID;
+    ArrayList<String> msg = new ArrayList<String>();
+    ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_view);
 
-        TextView txtView = (TextView)findViewById(R.id.txt_friendName);
-        ImageView photo = (ImageView)findViewById(R.id.img_friendPhoto);
+        final TextView txtView = (TextView)findViewById(R.id.txt_friendName);
+        final ImageView photo = (ImageView)findViewById(R.id.img_friendPhoto);
+        final ListView msg_body = (ListView)findViewById(R.id.msg_body);
 
         //get data from friend list
         Intent intent = getIntent();
@@ -45,7 +55,7 @@ public class Chat extends Activity {
         friend_name = intent.getStringExtra("user_name");
 
         //create VKREquest
-        VKRequest requestOutMessages = VKApi.messages().get(VKParameters.from(VKApiConst.USER_ID, u_id));
+        VKRequest requestOutMessages = new VKRequest("messages.getHistory", VKParameters.from("user_id", u_id, "count", 200));
 
         requestOutMessages.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
@@ -61,19 +71,17 @@ public class Chat extends Activity {
                     {
                         object = itemArr.getJSONObject(i);
 
-                        vkUID = object.getString("user_id");
-
-                        if ( object.getString("user_id").equals(vkUID) )
-                            Log.d("VK_MESSAGE_BODY", object.getString("body"));
-
-                        Log.d("VK_MESSAGE_TO_FRIEND", String.valueOf(vkUID));
+                        msg.add(object.getString("body"));
                     }
+                    adapter = new ArrayAdapter<String>(Chat.this, android.R.layout.simple_list_item_1, msg);
+                    msg_body.setAdapter(adapter);
 
                     Log.d("VK_MESSAGE", String.valueOf(itemArr));
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
             }
         });
 

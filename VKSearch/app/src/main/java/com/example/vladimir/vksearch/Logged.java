@@ -1,10 +1,17 @@
 package com.example.vladimir.vksearch;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.vk.sdk.api.VKApi;
+import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
@@ -19,58 +26,61 @@ import org.json.JSONObject;
 
 public class Logged extends Activity {
 
-    public String query;
-    public double latitude;
-    public double longitude;
-    public Integer cnt;
-    public Integer radius;
+    private String s_city, name, surname, photo_url;
+    private Integer cnt;
 
-    private JSONObject jPhotoos, photoObject, object;
-    private JSONArray photosArray;
+    private JSONObject jUsers, userObject, object;
+    private JSONArray usersArray;
+
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        query = "female";
-        latitude = 56.9132463;
-        longitude = 24.1752813;
-        cnt = 3;
-        radius = 5000;
+        s_city = "Riga";
+        cnt = 1;
+        intent = new Intent(Logged.this, Photos.class);
 
-        VKRequest search_photos = new VKRequest("photos.search", VKParameters.from("q", query, "lat", latitude, "long", longitude, "count", cnt, "radius", radius));
+        VKRequest search_users = new VKRequest("users.search", VKParameters.from("count", cnt, "hometown", s_city, "sex", 1, "status", 6, VKApiConst.FIELDS, "photo_max_orig, contacts, last_seen"));
 
-        final Intent intent = new Intent(Logged.this, Photos.class);
-
-        search_photos.executeWithListener(new VKRequest.VKRequestListener() {
+        search_users.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
 
-                Log.d("VK_RESPONSE_PHOTO", response.responseString);
-
                 try
                 {
-                    jPhotoos = new JSONObject(response.responseString);
-                    photoObject = jPhotoos.getJSONObject("response");
-                    photosArray = photoObject.getJSONArray("items");
+                    jUsers = new JSONObject(response.responseString);
+                    userObject = jUsers.getJSONObject("response");
+                    usersArray = userObject.getJSONArray("items");
 
-                    for ( int i=0; i<photosArray.length(); i++ )
+                    for( int i=0; i<usersArray.length(); i++ )
                     {
-                        object = photosArray.getJSONObject(i);
+                        object = usersArray.getJSONObject(i);
 
-                        //send photo urls to display activity
-                        intent.putExtra("photo_url", object.getString("photo_130"));
-                        Logged.this.getApplicationContext().startActivity(intent);
+                        name = object.getString("first_name");
+                        surname = object.getString("last_name");
+                        photo_url = object.getString("photo_max_orig");
 
-                        Log.d("VK_SINGLE_PHOTO", object.getString("photo_130"));
+                        try {
+                            intent.putExtra("name", name);
+                            intent.putExtra("surname", surname);
+                            intent.putExtra("photo", photo_url);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            Logged.this.getApplicationContext().startActivity(intent);
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
                     }
 
-                    Log.d("VK_ONE_PHOTO", String.valueOf(photosArray));
+                    Log.d("VK_FOUND_USERS", String.valueOf(object));
                 }
-                catch(JSONException e)
+                catch (JSONException je)
                 {
-                    e.printStackTrace();
+                    je.printStackTrace();
                 }
             }
         });

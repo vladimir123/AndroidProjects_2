@@ -38,6 +38,9 @@ public class Splash extends Activity {
             VKSdk.wakeUpSession(this, new VKCallback<VKSdk.LoginState>() {
                 @Override
                 public void onResult(VKSdk.LoginState res) {
+
+                    Log.d("VK_SPLASHER_RES", String.valueOf(res));
+
                     switch (res) {
                         case LoggedOut:
                             startActivity(new Intent(Splash.this, MainActivity.class));

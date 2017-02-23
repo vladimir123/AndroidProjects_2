@@ -7,8 +7,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-//import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 public class Photos extends Activity {
 //    private ArrayList<String> photo_url = new ArrayList<>();
 
-    private String photo, full_name;
+    private String photo, full_name, h_phone, m_phone;
 
     Intent intent;
 
@@ -34,9 +33,12 @@ public class Photos extends Activity {
         intent = getIntent();
         full_name = intent.getStringExtra("name")+" "+intent.getStringExtra("surname");
         photo = intent.getStringExtra("photo");
+        h_phone = intent.getStringExtra("phone");
+        m_phone = intent.getStringExtra("mobile");
 
         ImageView user_photo = (ImageView)findViewById(R.id.imgPhoto);
         TextView user = (TextView)findViewById(R.id.txtUser);
+        TextView contacts = (TextView)findViewById(R.id.txtContacts);
 
         if (intent != null)
         {
@@ -44,17 +46,12 @@ public class Photos extends Activity {
             {
                 user.setText( full_name );
 
-                Glide.with(this)
-                        .load(photo)
-                        .placeholder(R.drawable.spinner)
-                        .into(user_photo);
-
-/*
                 Picasso.with(getApplicationContext())
                         .load(photo)
                         .placeholder(R.drawable.progress_animation)
                         .into(user_photo);
-*/
+
+                contacts.setText("Phone: "+h_phone+"\r\n"+"Mobile: "+m_phone);
             }
             catch (Exception e)
             {

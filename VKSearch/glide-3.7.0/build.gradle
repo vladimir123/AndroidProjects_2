@@ -1,0 +1,5 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('glide-3.7.0.jar'))
+dependencies {
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+}

@@ -7,7 +7,8 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+//import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -42,10 +43,18 @@ public class Photos extends Activity {
             try
             {
                 user.setText( full_name );
+
+                Glide.with(this)
+                        .load(photo)
+                        .placeholder(R.drawable.spinner)
+                        .into(user_photo);
+
+/*
                 Picasso.with(getApplicationContext())
                         .load(photo)
                         .placeholder(R.drawable.progress_animation)
                         .into(user_photo);
+*/
             }
             catch (Exception e)
             {

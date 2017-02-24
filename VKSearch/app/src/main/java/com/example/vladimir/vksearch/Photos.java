@@ -6,8 +6,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -18,9 +23,44 @@ import java.util.ArrayList;
 public class Photos extends Activity {
 //    private ArrayList<String> photo_url = new ArrayList<>();
 
-    private String photo, full_name, h_phone, m_phone;
+    public String photo, full_name, h_phone, m_phone;
+
+    private String usersArray;
+    private JSONArray users;
+    private JSONObject object;
 
     Intent intent;
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        this.finish();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Toast.makeText(getApplicationContext(), "OnResume fired", Toast.LENGTH_LONG).show();
+
+//        recreate();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Toast.makeText(getApplicationContext(), "OnStart fired", Toast.LENGTH_LONG).show();
+
+//        recreate();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,24 +68,29 @@ public class Photos extends Activity {
         setContentView(R.layout.photos_layout);
 
         //getting photos from search query
-//        photo_url.add(intent.getStringExtra("photo_url"));
 
         intent = getIntent();
-        full_name = intent.getStringExtra("name")+" "+intent.getStringExtra("surname");
-        photo = intent.getStringExtra("photo");
-        h_phone = intent.getStringExtra("phone");
-        m_phone = intent.getStringExtra("mobile");
+        usersArray = intent.getStringExtra("userArray");
 
         ImageView user_photo = (ImageView)findViewById(R.id.imgPhoto);
         TextView user = (TextView)findViewById(R.id.txtUser);
         TextView contacts = (TextView)findViewById(R.id.txtContacts);
 
-        if (intent != null)
+        try
         {
-            try
-            {
-                user.setText( full_name );
+            users = new JSONArray(usersArray);
 
+            Log.e("VK_PHOTO_USER_OBJECT", String.valueOf(users));
+            for (int i = 0; i < users.length(); i++)
+            {
+                object = users.getJSONObject(i);
+
+                full_name = object.getString("first_name") + " " + object.getString("last_name");
+                photo = object.getString("photo_max_orig");
+                h_phone = object.getString("home_phone");
+                m_phone = object.getString("mobile_phone");
+
+                user.setText( full_name );
                 Picasso.with(getApplicationContext())
                         .load(photo)
                         .placeholder(R.drawable.progress_animation)
@@ -53,18 +98,12 @@ public class Photos extends Activity {
 
                 contacts.setText("Phone: "+h_phone+"\r\n"+"Mobile: "+m_phone);
             }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
 
-//        for (int i=0; i<photo_url.size(); i++)
-//        {
-////            Picasso.with(getApplicationContext()).load(photo_url.get(i)).into(photo);
-//
-//            Log.d("VK_PHOTO_URL", photo_url.get(i));
-//        }
+        }
+        catch(JSONException jException)
+        {
+            jException.printStackTrace();
+        }
 
     }
 }

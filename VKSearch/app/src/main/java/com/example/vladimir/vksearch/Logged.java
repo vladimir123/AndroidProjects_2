@@ -46,7 +46,7 @@ public class Logged extends Activity {
         super.onCreate(savedInstanceState);
 
         s_city = "Riga";
-        cnt = 1;
+        cnt = 2;
         intent = new Intent(Logged.this, Photos.class);
 
         VKRequest search_users = new VKRequest("users.search", VKParameters.from("count", cnt, "hometown", s_city, "sex", 1, "status", 6, VKApiConst.FIELDS, "photo_max_orig, contacts, last_seen"));
@@ -63,33 +63,11 @@ public class Logged extends Activity {
                     userObject = jUsers.getJSONObject("response");
                     usersArray = userObject.getJSONArray("items");
 
-                    for( int i=0; i<usersArray.length(); i++ )
-                    {
-                        object = usersArray.getJSONObject(i);
+                    Log.d("VK_FOUND_USERS_ARRAY", String.valueOf(usersArray));
 
-                        name = object.getString("first_name");
-                        surname = object.getString("last_name");
-                        photo_url = object.getString("photo_max_orig");
-                        m_phone = object.getString("mobile_phone");
-                        h_phone = object.getString("home_phone");
-
-                        try {
-                            intent.putExtra("name", name);
-                            intent.putExtra("surname", surname);
-                            intent.putExtra("photo", photo_url);
-                            intent.putExtra("mobile", m_phone);
-                            intent.putExtra("phone", h_phone);
-//                            intent.putExtra("last_seen", object.getString("last_seen"));
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            Logged.this.getApplicationContext().startActivity(intent);
-                        }
-                        catch (Exception e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    Log.d("VK_FOUND_USERS", String.valueOf(object));
+                    intent.putExtra("userArray", usersArray.toString());
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    Logged.this.getApplicationContext().startActivity(intent);
                 }
                 catch (JSONException je)
                 {
@@ -97,5 +75,17 @@ public class Logged extends Activity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.finish();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
     }
 }

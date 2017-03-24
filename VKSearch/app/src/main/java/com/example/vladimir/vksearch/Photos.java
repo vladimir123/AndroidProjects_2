@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,23 +74,38 @@ public class Photos extends Activity {
         intent = getIntent();
         usersArray = intent.getStringExtra("userArray");
 
-        ImageView user_photo = (ImageView)findViewById(R.id.imgPhoto);
-        TextView user = (TextView)findViewById(R.id.txtUser);
-        TextView contacts = (TextView)findViewById(R.id.txtContacts);
+        final ImageView user_photo = (ImageView)findViewById(R.id.imgPhoto);
+        final TextView user = (TextView)findViewById(R.id.txtUser);
+        final TextView contacts = (TextView)findViewById(R.id.txtContacts);
+
+        Button btn_like = (Button)findViewById(R.id.btn_like);
+        Button btn_dislike = (Button)findViewById(R.id.btn_dislike);
+
 
         try
         {
             users = new JSONArray(usersArray);
 
             Log.e("VK_PHOTO_USER_OBJECT", String.valueOf(users));
+
             for (int i = 0; i < users.length(); i++)
             {
                 object = users.getJSONObject(i);
 
+//                Log.e("VK_USER_OBJECT", String.valueOf(object));
+
                 full_name = object.getString("first_name") + " " + object.getString("last_name");
                 photo = object.getString("photo_max_orig");
-                h_phone = object.getString("home_phone");
-                m_phone = object.getString("mobile_phone");
+
+                if ( object.has("home_phone") )
+                    h_phone = object.getString("home_phone");
+                else
+                    h_phone = " - ";
+
+                if ( object.has("mobile_phone") )
+                    m_phone = object.getString("mobile_phone");
+                else
+                    m_phone = " - ";
 
                 user.setText( full_name );
                 Picasso.with(getApplicationContext())
@@ -104,6 +121,13 @@ public class Photos extends Activity {
         {
             jException.printStackTrace();
         }
+
+        btn_like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("VK_USER_ARRAY_ON_CLICK", String.valueOf(users.length()));
+            }
+        });
 
     }
 }

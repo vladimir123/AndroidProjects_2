@@ -51,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "sucessful", Toast.LENGTH_LONG).show();
                 Log.d("VK_LOGIN", "Access granted");
                 //Transfer VK data to other activity
-                Intent intent = new Intent(MainActivity.this, Logged.class);
+//                Intent intent = new Intent(MainActivity.this, Logged.class);
+                Intent intent = new Intent(MainActivity.this, Photos.class);
                 intent.putExtra("res", res.accessToken);
                 startActivity(intent);
             }

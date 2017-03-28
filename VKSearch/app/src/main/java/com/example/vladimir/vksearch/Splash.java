@@ -47,7 +47,7 @@ public class Splash extends Activity {
                             finish();
                             break;
                         case LoggedIn:
-                            Intent intent = new Intent(Splash.this, Logged.class);
+                            Intent intent = new Intent(Splash.this, Photos.class);
                             startActivity(intent);
                             finish();
                             break;

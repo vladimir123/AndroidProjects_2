@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,21 +34,24 @@ import java.util.Random;
  */
 
 public class Photos extends Activity {
-    public static String full_name;
 
-    private static JSONObject jUsers, object;
+    public static String full_name;
+    public static String[] photo_id;
+    public static String user_id;
+
+    private static JSONObject jUsers, object, jLikes;
     private static JSONObject userObject;
     private static JSONArray usersArray;
 
     private static ImageView user_photo;
     private static TextView user;
     private static TextView contacts;
+    private static Button btn_like, btn_dislike;
 
     private static int ofset = 0;
 
     private static Context context;
 
-//TODO: peredelat zagruzku v funkcii + dodelat like fotkam
 
     @SuppressLint("LongLogTag")
     @Override
@@ -62,8 +67,8 @@ public class Photos extends Activity {
 
 //        final String city = "Riga";
 
-        Button btn_like = (Button)findViewById(R.id.btn_like);
-        Button btn_dislike = (Button)findViewById(R.id.btn_dislike);
+        btn_like = (Button)findViewById(R.id.btn_like);
+        btn_dislike = (Button)findViewById(R.id.btn_dislike);
 
         Log.e("VK_Photos_fired", "onCreate");
 
@@ -74,95 +79,6 @@ public class Photos extends Activity {
         // get user from VK.com
         Photos.getUsers("Riga", ofset);
         ofset++;
-
-/*
-        btn_like.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("VK_Photos_fired", "onClick Like");
-
-                try
-                {
-                    VKRequest search_users = new VKRequest("users.search", VKParameters.from("count", 1, "hometown", city, "sex", 1, "status", 6, "offset", ofset, VKApiConst.FIELDS, "photo_max_orig, contacts, last_seen, photo_id"));
-
-                    search_users.executeWithListener(new VKRequest.VKRequestListener() {
-                        @SuppressLint("LongLogTag")
-                        @Override
-                        public void onComplete(VKResponse response) {
-                            super.onComplete(response);
-
-                            object = null;
-
-                            try
-                            {
-                                jUsers = new JSONObject(response.responseString);
-                                userObject = jUsers.getJSONObject("response");
-                                usersArray = userObject.getJSONArray("items");
-
-                                Log.e("VK_FOUND_USERS_ARRAY", String.valueOf(usersArray));
-                                for (int i = 0; i < usersArray.length(); i++)
-                                {
-                                    object = usersArray.getJSONObject(i);
-                                    Log.e("VK_CONCRETE_USER_OBJECT", String.valueOf(object));
-
-                                    user.setText( object.getString("first_name")+" "+object.getString("last_name") );
-                                    Picasso.with(getApplicationContext())
-                                            .load(object.getString("photo_max_orig"))
-                                            .placeholder(R.drawable.progress_animation)
-                                            .into(user_photo);
-
-                                    if ( object.has("mobile_phone") )
-                                        h_phone = object.getString("mobile_phone");
-                                    else
-                                        h_phone = " - ";
-                                    if ( object.has("home_phone") )
-                                        m_phone = object.getString("home_phone");
-                                    else
-                                        m_phone = " - ";
-
-                                    contacts.setText("Phone: "+h_phone+"\r\n"+"Mobile: "+m_phone);
-
-                                    String photo_id = object.getString("photo_id").split("_")[1];
-                                    String u_id = object.getString("id");
-
-                                    Log.e("VK_PHOTO_ID", String.valueOf(Integer.parseInt(photo_id)));
-
-                                    //stavim like na foto
-                                    setLike("photo", u_id, Integer.parseInt(photo_id));
-                                }
-                            }
-                            catch (JSONException je)
-                            {
-                                je.printStackTrace();
-                            }
-                        }
-                    });
-
-                    ofset++;
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        });
-*/
-        btn_dislike.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("VK_Photos_fired", "onClick DisLike");
-
-                try
-                {
-                    Photos.getUsers("Riga", ofset);
-                    ofset++;
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     public static Context getAppContext()
@@ -170,22 +86,29 @@ public class Photos extends Activity {
         return Photos.context;
     }
 
-    public static String setLike(String type, String owner_id, int item_id ) {
-        final String[] res = {""};
+    public static void setLike(String type, String owner_id, String item_id ) {
+
+        Log.e("VK_SET_LIKES", "Likes fired!"+" type => "+type+" user => "+owner_id+" photo => "+item_id);
+
         VKRequest request = new VKRequest("likes.add", VKParameters.from("type", type, "owner_id", owner_id, "item_id", item_id));
-        request.executeSyncWithListener(new VKRequest.VKRequestListener() {
+
+        request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                try {
-                    JSONObject jsonObject = response.json.getJSONObject("response");
-                    res[0] = jsonObject.getString("likes");
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                try
+                {
+                    jLikes = new JSONObject(response.responseString);
+                    Log.e("VK_LIKES_RESPONSE", String.valueOf(jLikes));
+                }
+                catch(JSONException lex)
+                {
+                    lex.printStackTrace();
                 }
             }
         });
-        return res[0];
+
+        return;
     }
 
     @SuppressLint("LongLogTag")
@@ -211,23 +134,38 @@ public class Photos extends Activity {
 
                     Log.e("VK_FOUND_USERS_ARRAY", String.valueOf(usersArray));
 
-                    for (int i = 0; i < usersArray.length(); i++)
-                    {
-                        object = usersArray.getJSONObject(i);
+                    if (usersArray != null) {
+                        for (int i = 0; i < usersArray.length(); i++) {
+                            object = usersArray.getJSONObject(i);
 
-                        Log.e("VK_CONCRETE_USER_OBJECT", String.valueOf(object));
+                            Log.e("VK_CONCRETE_USER_OBJECT", String.valueOf(object));
 
 
-                        rez.put( "first_name", object.getString("first_name") );
-                        rez.put( "last_name", object.getString("last_name") );
-                        rez.put( "photo_max_orig", object.getString("photo_max_orig") );
+                            rez.put("first_name", object.getString("first_name"));
+                            rez.put("last_name", object.getString("last_name"));
+                            rez.put("photo_max_orig", object.getString("photo_max_orig"));
+                            rez.put("photo_id", object.getString("photo_id"));
+                            rez.put("user_id", object.getString("id"));
 
-                        if ( object.has("home_phone") )
-                            rez.put( "home_phone", object.getString("home_phone") );
-                        if ( object.has("mobile_phone") )
-                            rez.put( "mobile_phone", object.getString("mobile_phone") );
+                            if (object.has("home_phone"))
+                                rez.put("home_phone", object.getString("home_phone"));
+                            else
+                                rez.put("home_phone", " - ");
+
+                            if (object.has("mobile_phone"))
+                                rez.put("mobile_phone", object.getString("mobile_phone"));
+                            else
+                                rez.put("mobile_phone", " - ");
+                        }
+
+
+                        Photos.getUser(rez);
                     }
-                    Photos.getUser(rez);
+                    else
+                    {
+                        Intent photos = new Intent(Photos.getAppContext(), Photos.class);
+                        Photos.getAppContext().startActivity(photos);
+                    }
                 }
                 catch (JSONException je)
                 {
@@ -238,22 +176,51 @@ public class Photos extends Activity {
         return;
     }
 
-//    public static void getUser(ArrayList<String> data)
     public static void getUser(Map<String, String> data)
     {
-        Log.e("VK_GET_USERS_RESULT", data.get("first_name"));
+        try {
+            full_name = data.get("first_name") + " " + data.get("last_name");
 
-        full_name = data.get("first_name")+" "+data.get("last_name");
+            user.setText(full_name);
+            Picasso.with(Photos.getAppContext())
+                    .load(data.get("photo_max_orig"))
+                    .placeholder(R.drawable.progress_animation)
+                    .into(user_photo);
 
-        user.setText( full_name );
-        Picasso.with( Photos.getAppContext() )
-                .load(data.get("photo_max_orig"))
-                .placeholder(R.drawable.progress_animation)
-                .into(user_photo);
-        if ( data.containsKey("mobile_phone") && data.get("mobile_phone") != "" )
-            contacts.setText("Phone: "+data.get("mobile_phone"));
-        if ( data.containsKey("home_phone") && data.get("home_phone") != "" )
-            contacts.setText("Phone: "+data.get("home_phone"));
+            contacts.setText("Phone: " + data.get("home_phone") + "\r\n" +"Mobile: " + data.get("mobile_phone"));
+
+            photo_id = data.get("photo_id").split("_");
+            user_id = data.get("user_id");
+
+            btn_like.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.e("VK_Photos_fired", "onClick Like");
+
+                    Photos.setLike("photo", user_id, photo_id[1]);
+                    Photos.getUsers("Riga", ofset);
+                    ofset++;
+                }
+            });
+
+            btn_dislike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.e("VK_Photos_fired", "onClick DisLike");
+
+                    try {
+                        Photos.getUsers("Riga", ofset);
+                        ofset++;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
 
         return;
     }

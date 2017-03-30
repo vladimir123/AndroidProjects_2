@@ -14,7 +14,7 @@ import com.vk.sdk.api.VKError;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String[] scope = new String[]{VKScope.PHOTOS, VKScope.MESSAGES};
+    private String[] scope = new String[]{VKScope.PHOTOS, VKScope.MESSAGES, VKScope.WALL};
 
     @Override
     protected void onPause() {

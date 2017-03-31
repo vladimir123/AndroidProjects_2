@@ -1,10 +1,20 @@
 package com.example.vladimir.vksearch;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
 import android.util.Log;
@@ -24,10 +34,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+
+import static com.example.vladimir.vksearch.Photos.ofset;
 
 /**
  * Created by Vladimir on 21.02.2017.
@@ -48,10 +63,34 @@ public class Photos extends Activity {
     private static TextView contacts;
     private static Button btn_like, btn_dislike;
 
-    private static int ofset = 0;
+    public static int ofset = 0;
 
     private static Context context;
 
+    private LocationManager locationManager;
+    private String provider;
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
 
     @SuppressLint("LongLogTag")
     @Override
@@ -61,22 +100,27 @@ public class Photos extends Activity {
 
         Photos.context = getApplicationContext();
 
-        user_photo = (ImageView)findViewById(R.id.imgPhoto);
-        user = (TextView)findViewById(R.id.txtUser);
-        contacts = (TextView)findViewById(R.id.txtContacts);
+        user_photo = (ImageView) findViewById(R.id.imgPhoto);
+        user = (TextView) findViewById(R.id.txtUser);
+        contacts = (TextView) findViewById(R.id.txtContacts);
 
-        btn_like = (Button)findViewById(R.id.btn_like);
-        btn_dislike = (Button)findViewById(R.id.btn_dislike);
+        btn_like = (Button) findViewById(R.id.btn_like);
+        btn_dislike = (Button) findViewById(R.id.btn_dislike);
 
         Log.e("VK_Photos_fired", "onCreate");
-
-        Random r = new Random();
-
-        if ( ofset == 0 )
-            ofset = r.nextInt(80 - 1) + 1;
-        // get user from VK.com
-        Photos.getUsers("Riga", ofset);
-        ofset++;
+        try
+        {
+            //GPS
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            LocationListener locationListener = new MyLocationListener();
+            //noinspection MissingPermission
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public static Context getAppContext()
@@ -223,6 +267,59 @@ public class Photos extends Activity {
         return;
     }
 
+}
 
+class MyLocationListener implements LocationListener {
 
+    @Override
+    public void onLocationChanged(Location loc) {
+        Toast.makeText(Photos.getAppContext(),"Location changed: Lat: " + loc.getLatitude() + " Lng: "+ loc.getLongitude(), Toast.LENGTH_SHORT).show();
+        String longitude = "Longitude: " + loc.getLongitude();
+        Log.e("VK_GET_CITY", longitude);
+        String latitude = "Latitude: " + loc.getLatitude();
+        Log.e("VK_GET_CITY", latitude);
+
+        /*------- To get city name from coordinates -------- */
+        String cityName = null;
+        Geocoder gcd = new Geocoder(Photos.getAppContext(), Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+
+            Log.e("VK_CITY", String.valueOf(addresses));
+
+            if (addresses.size() > 0) {
+                System.out.println(addresses.get(0).getLocality());
+                cityName = addresses.get(0).getLocality();
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        String s = longitude + "\n" + latitude + "\n\nMy Current City is: " + cityName;
+
+        Log.e("VK_CITY_NAME", s);
+
+        //get random number for random user from search function
+        Random r = new Random();
+        if ( ofset == 0 )
+            ofset = r.nextInt(80 - 1) + 1;
+
+        Toast.makeText(Photos.getAppContext(), "City => "+cityName, Toast.LENGTH_LONG).show();
+
+        // get user from VK.com
+//        Photos.getUsers("Riga", ofset);
+//        Photos.getUsers(cityName, ofset);
+//        ofset++;
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {}
+
+    @Override
+    public void onProviderEnabled(String provider) {}
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
 }

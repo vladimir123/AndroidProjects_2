@@ -11,6 +11,9 @@ import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
+import com.vk.sdk.util.VKUtil;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,10 +36,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-/*
+
         String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
         System.out.println(Arrays.asList(fingerprints));
-*/
+
 
 //        Toast.makeText(getApplicationContext(), "Logged!", Toast.LENGTH_LONG).show();
         VKSdk.login(this, scope);

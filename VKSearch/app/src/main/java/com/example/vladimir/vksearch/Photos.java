@@ -65,8 +65,6 @@ public class Photos extends Activity {
         user = (TextView)findViewById(R.id.txtUser);
         contacts = (TextView)findViewById(R.id.txtContacts);
 
-//        final String city = "Riga";
-
         btn_like = (Button)findViewById(R.id.btn_like);
         btn_dislike = (Button)findViewById(R.id.btn_dislike);
 

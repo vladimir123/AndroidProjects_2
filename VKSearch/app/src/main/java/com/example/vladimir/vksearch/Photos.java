@@ -111,11 +111,14 @@ public class Photos extends Activity {
         try
         {
             //GPS
-            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             LocationListener locationListener = new MyLocationListener();
             //noinspection MissingPermission
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+            Criteria criteria = new Criteria();
+            provider = locationManager.getBestProvider(criteria, false);
+            //noinspection MissingPermission
+            locationManager.requestLocationUpdates(provider, 5000, 0, locationListener);
         }
         catch(Exception e)
         {
@@ -309,8 +312,8 @@ class MyLocationListener implements LocationListener {
 
         // get user from VK.com
 //        Photos.getUsers("Riga", ofset);
-//        Photos.getUsers(cityName, ofset);
-//        ofset++;
+        Photos.getUsers(cityName, ofset);
+        ofset++;
 
     }
 

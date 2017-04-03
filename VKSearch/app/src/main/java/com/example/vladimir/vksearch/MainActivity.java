@@ -36,10 +36,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+/*
         String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
         System.out.println(Arrays.asList(fingerprints));
-
+*/
 
 //        Toast.makeText(getApplicationContext(), "Logged!", Toast.LENGTH_LONG).show();
         VKSdk.login(this, scope);

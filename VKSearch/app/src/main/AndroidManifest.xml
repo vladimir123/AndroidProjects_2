@@ -17,21 +17,21 @@
         android:supportsRtl="true"
         android:name=".Application"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" android:launchMode="singleTask" android:clearTaskOnLaunch="true">
+        <activity android:name=".MainActivity" android:launchMode="singleTask" android:clearTaskOnLaunch="true" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <!-- Splash -->
-        <activity android:name=".Splash" android:launchMode="singleTask" android:clearTaskOnLaunch="true">
+        <activity android:name=".Splash" android:launchMode="singleTask" android:clearTaskOnLaunch="true" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <!-- Photos -->
-        <activity android:name=".Photos" android:finishOnTaskLaunch="true">
+        <activity android:name=".Photos" android:finishOnTaskLaunch="true" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />

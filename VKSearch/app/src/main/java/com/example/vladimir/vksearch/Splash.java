@@ -44,70 +44,14 @@ import static com.vk.sdk.VKSdk.LoginState.Unknown;
 public class Splash extends Activity {
 
     public static Boolean isShown = false;
-    public static String cityName;
 
-    private LocationManager locationManager;
-    private String provider;
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-        switch (requestCode) {
-            case 1: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try
-        {
-            //GPS
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            //noinspection MissingPermission
-            Criteria criteria = new Criteria();
-            provider = locationManager.getBestProvider(criteria, false);
-            //noinspection MissingPermission
-            double latitude = locationManager.getLastKnownLocation(provider).getLatitude();
-            //noinspection MissingPermission
-            double longitude = locationManager.getLastKnownLocation(provider).getLongitude();
 
-            Log.e("VK_SPLASH_GPS", "lat => "+latitude+" long => "+longitude);
-
-            cityName = null;
-            Geocoder gcd = new Geocoder(this.getApplicationContext(), Locale.getDefault());
-            List<Address> addresses;
-            try {
-                addresses = gcd.getFromLocation(latitude, longitude, 1);
-
-                Log.e("VK_CITY", String.valueOf(addresses));
-
-                if (addresses.size() > 0) {
-                    System.out.println(addresses.get(0).getLocality());
-                    cityName = addresses.get(0).getLocality();
-                }
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
 
         if ( isOnline() ) {
             Log.d("VK_SPLASSHER", "Phone isOnline!!");
@@ -125,7 +69,6 @@ public class Splash extends Activity {
                             break;
                         case LoggedIn:
                             Intent intent = new Intent(Splash.this, Photos.class);
-                            intent.putExtra("current_city", cityName);
                             startActivity(intent);
                             finish();
                             break;

@@ -1,15 +1,26 @@
 package com.example.vladimir.vksearch;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.vk.sdk.api.VKApiConst;
@@ -21,7 +32,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
@@ -46,16 +60,17 @@ public class Photos extends Activity {
     private static Button btn_like, btn_dislike;
 
     public static int ofset = 0;
-
+/*
     private static Context context;
-
+    private static String cityName;
+*/
     @SuppressLint("LongLogTag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photos_layout);
 
-        Photos.context = getApplicationContext();
+//        Photos.context = getApplicationContext();
 
         user_photo = (ImageView) findViewById(R.id.imgPhoto);
         user = (TextView) findViewById(R.id.txtUser);
@@ -66,25 +81,42 @@ public class Photos extends Activity {
 
         Log.e("VK_Photos_fired", "onCreate");
 
-        Intent intent = getIntent();
-        current_city = intent.getStringExtra("current_city");
-        Log.e("VK_PHOTOS_CITYNAME", current_city);
+        try
+        {
+            GetCity city = new GetCity(getApplicationContext());
+            List<Address> ci = city.getCity(getApplicationContext());
+
+            Toast.makeText(getApplicationContext(), "CITY ON CREATE => "+ci.get(0), Toast.LENGTH_LONG).show();
+
+            Log.e("VK_CITYGET", String.valueOf(ci.get(0)));
+//            GPSTracker gpsTracker = new GPSTracker(this);
+//
+//            if (gpsTracker.getIsGPSTrackingEnabled())
+//                gpsTracker.getGeocoderAddress(this);
+//            else
+//                gpsTracker.showSettingsAlert();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
 
         //get random number for random user from search function
         Random r = new Random();
         if ( ofset == 0 )
             ofset = r.nextInt(80 - 1) + 1;
 
-        Photos.getUsers(current_city, ofset);
+        getUsers(ofset, "Riga");
         ofset++;
-    }
 
-    public static Context getAppContext()
+    }
+/*
+    public Context getAppContext()
     {
-        return Photos.context;
+        return this.context;
     }
-
-    public static void setLike(String type, String owner_id, String item_id ) {
+*/
+    public void setLike(String type, String owner_id, String item_id ) {
 
         Log.e("VK_SET_LIKES", "Likes fired!"+" type => "+type+" user => "+owner_id+" photo => "+item_id);
 
@@ -110,14 +142,13 @@ public class Photos extends Activity {
     }
 
     @SuppressLint("LongLogTag")
-    public static void getUsers(String city, int ofset)
+    public void getUsers(int ofset, String cityName)
     {
         Log.e("VK_GETUSERS_OFFSET", String.valueOf(ofset));
-        Log.e("VK_GETUSERS_CURRENT_CITY", current_city);
 
         final Map<String,String> rez = new HashMap<>();
 
-        VKRequest search_users = new VKRequest("users.search", VKParameters.from("count", 1, "hometown", city, "sex", 1, "status", 6, "offset", ofset, VKApiConst.FIELDS, "photo_max_orig, contacts, last_seen, photo_id"));
+        VKRequest search_users = new VKRequest("users.search", VKParameters.from("count", 1, "hometown", cityName, "sex", 1, "status", 6, "offset", ofset, VKApiConst.FIELDS, "photo_max_orig, contacts, last_seen, photo_id"));
 
         search_users.executeWithListener(new VKRequest.VKRequestListener() {
             @SuppressLint("LongLogTag")
@@ -133,7 +164,8 @@ public class Photos extends Activity {
 
                     Log.e("VK_FOUND_USERS_ARRAY", String.valueOf(usersArray));
 
-                    if (usersArray != null) {
+                    if (usersArray != null)
+                    {
                         for (int i = 0; i < usersArray.length(); i++) {
                             object = usersArray.getJSONObject(i);
 
@@ -158,12 +190,12 @@ public class Photos extends Activity {
                         }
 
 
-                        Photos.getUser(rez);
+                        getUser(rez);
                     }
                     else
                     {
-                        Intent photos = new Intent(Photos.getAppContext(), Photos.class);
-                        Photos.getAppContext().startActivity(photos);
+                        Intent photos = new Intent(getApplicationContext(), Photos.class);
+                        getApplicationContext().startActivity(photos);
                     }
                 }
                 catch (JSONException je)
@@ -175,13 +207,13 @@ public class Photos extends Activity {
         return;
     }
 
-    public static void getUser(Map<String, String> data)
+    public void getUser(Map<String, String> data)
     {
         try {
             full_name = data.get("first_name") + " " + data.get("last_name");
 
             user.setText(full_name);
-            Picasso.with(Photos.getAppContext())
+            Picasso.with(getApplicationContext())
                     .load(data.get("photo_max_orig"))
                     .placeholder(R.drawable.progress_animation)
                     .into(user_photo);
@@ -197,9 +229,10 @@ public class Photos extends Activity {
                     Log.e("VK_Photos_fired", "onClick Like");
                     Log.e("VK_LIKE_CLICKED_CITY", current_city);
 
-                    Photos.setLike("photo", user_id, photo_id[1]);
+                    setLike("photo", user_id, photo_id[1]);
 //                    Photos.getUsers("Riga", ofset);
-                    Photos.getUsers(current_city, ofset);
+
+                    getUsers(ofset, "Riga");
                     ofset++;
                 }
             });
@@ -208,11 +241,11 @@ public class Photos extends Activity {
                 @Override
                 public void onClick(View v) {
                     Log.e("VK_Photos_fired", "onClick DisLike");
-                    Log.e("VK_DISLIKE_CLICKED_CITY", current_city);
+//                    Log.e("VK_DISLIKE_CLICKED_CITY", current_city);
 
-                    try {
-//                        Photos.getUsers("Riga", ofset);
-                        Photos.getUsers(current_city, ofset);
+                    try
+                    {
+                        getUsers(ofset, "Riga");
                         ofset++;
                     } catch (Exception e) {
                         e.printStackTrace();

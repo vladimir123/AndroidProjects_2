@@ -63,41 +63,20 @@ public class Photos extends Activity {
 
     public static int ofset = 0;
     static Boolean permGranted = false;
-/*
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                {
-                    permGranted = true;
-                }
-                else
-                {
-                    ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, 1);
 
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
+    public static String getCurrent_city() {
+        return current_city;
     }
-*/
-    /*
-        private static Context context;
-        private static String cityName;
-    */
+
+    public static void setCurrent_city(String current_city) {
+        Photos.current_city = current_city;
+    }
+
     @SuppressLint("LongLogTag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photos_layout);
-
-//        Photos.context = getApplicationContext();
 
         user_photo = (ImageView) findViewById(R.id.imgPhoto);
         user = (TextView) findViewById(R.id.txtUser);
@@ -120,6 +99,8 @@ public class Photos extends Activity {
             Toast.makeText(getApplicationContext(), "CITY ON CREATE => "+ci.get(0), Toast.LENGTH_LONG).show();
 
             Log.e("VK_CITYGET", String.valueOf(ci.get(0)));
+
+            current_city = ci.get(0).getLocality();
         }
         catch(Exception e)
         {
@@ -131,16 +112,12 @@ public class Photos extends Activity {
         if ( ofset == 0 )
             ofset = r.nextInt(80 - 1) + 1;
 
-        getUsers(ofset, "Riga");
+//        getUsers(ofset, "Riga");
+        getUsers(ofset, current_city);
         ofset++;
 
     }
-/*
-    public Context getAppContext()
-    {
-        return this.context;
-    }
-*/
+
     public void setLike(String type, String owner_id, String item_id ) {
 
         Log.e("VK_SET_LIKES", "Likes fired!"+" type => "+type+" user => "+owner_id+" photo => "+item_id);
@@ -170,6 +147,7 @@ public class Photos extends Activity {
     public void getUsers(int ofset, String cityName)
     {
         Log.e("VK_GETUSERS_OFFSET", String.valueOf(ofset));
+        Log.e("VK_GETUSERS_CURRENTCITY", cityName);
 
         final Map<String,String> rez = new HashMap<>();
 
@@ -257,7 +235,7 @@ public class Photos extends Activity {
                     setLike("photo", user_id, photo_id[1]);
 //                    Photos.getUsers("Riga", ofset);
 
-                    getUsers(ofset, "Riga");
+                    getUsers(ofset, current_city);
                     ofset++;
                 }
             });
@@ -270,7 +248,7 @@ public class Photos extends Activity {
 
                     try
                     {
-                        getUsers(ofset, "Riga");
+                        getUsers(ofset, current_city);
                         ofset++;
                     } catch (Exception e) {
                         e.printStackTrace();

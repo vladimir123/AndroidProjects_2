@@ -39,6 +39,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+
 /**
  * Created by Vladimir on 21.02.2017.
  */
@@ -60,10 +62,35 @@ public class Photos extends Activity {
     private static Button btn_like, btn_dislike;
 
     public static int ofset = 0;
+    static Boolean permGranted = false;
 /*
-    private static Context context;
-    private static String cityName;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    permGranted = true;
+                }
+                else
+                {
+                    ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, 1);
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
 */
+    /*
+        private static Context context;
+        private static String cityName;
+    */
     @SuppressLint("LongLogTag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,20 +108,18 @@ public class Photos extends Activity {
 
         Log.e("VK_Photos_fired", "onCreate");
 
+
         try
         {
+
+            ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, 1);
+
             GetCity city = new GetCity(getApplicationContext());
             List<Address> ci = city.getCity(getApplicationContext());
 
             Toast.makeText(getApplicationContext(), "CITY ON CREATE => "+ci.get(0), Toast.LENGTH_LONG).show();
 
             Log.e("VK_CITYGET", String.valueOf(ci.get(0)));
-//            GPSTracker gpsTracker = new GPSTracker(this);
-//
-//            if (gpsTracker.getIsGPSTrackingEnabled())
-//                gpsTracker.getGeocoderAddress(this);
-//            else
-//                gpsTracker.showSettingsAlert();
         }
         catch(Exception e)
         {

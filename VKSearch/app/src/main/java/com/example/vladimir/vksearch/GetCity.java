@@ -27,7 +27,7 @@ import static android.content.Context.LOCATION_SERVICE;
  * Created by Vladimir on 10.04.2017.
  */
 
-public class GetCity extends ActivityCompat implements LocationListener {
+public class GetCity implements LocationListener {
 
     private final Context mContext;
     double latitude, longitude;
@@ -44,26 +44,7 @@ public class GetCity extends ActivityCompat implements LocationListener {
     public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
-/*
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-    }
-*/
     public GetCity(Context context) {
         this.mContext = context;
 
@@ -85,24 +66,30 @@ public class GetCity extends ActivityCompat implements LocationListener {
     public void getLocation() {
         LocationManager locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
 
-        ActivityCompat.requestPermissions((Activity) mContext, new String[]{ACCESS_FINE_LOCATION}, 1);
-
         Criteria criteria = new Criteria();
         String provider = locationManager.getBestProvider(criteria, false);
 
-        ActivityCompat.requestPermissions((Activity)mContext, new String[]{ACCESS_FINE_LOCATION}, 1);
         //noinspection MissingPermission
         locationManager.requestLocationUpdates(provider, 0, 0, this);
 
-        if (locationManager != null)
+        if (locationManager != null) {
             //noinspection MissingPermission
             location = locationManager.getLastKnownLocation(provider);
+            updateGPSCoords();
+        }
+    }
+
+    private void updateGPSCoords() {
+        if (location != null)
+        {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+        }
     }
 
     public List<Address> getCity(Context context)
     {
         /*------- To get city name from coordinates -------- */
-//        String cityName = null;
         Geocoder gcd = new Geocoder(context, Locale.getDefault());
         List<Address> addresses;
         try {
@@ -111,14 +98,6 @@ public class GetCity extends ActivityCompat implements LocationListener {
             Log.e("VK_CITY", String.valueOf(addresses));
 
             return addresses;
-/*
-            if (addresses.size() > 0) {
-                System.out.println(addresses.get(0).getLocality());
-                cityName = addresses.get(0).getLocality();
-            }
-
-            Log.e("VK_GETCITY_GPS", cityName);
-*/
         }
         catch (IOException e) {
             e.printStackTrace();

@@ -64,7 +64,9 @@ public class Splash extends Activity {
 
                     switch (res) {
                         case LoggedOut:
-                            startActivity(new Intent(Splash.this, MainActivity.class));
+                            Intent intent_out = new Intent(Splash.this, MainActivity.class);
+//                            intent_out.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent_out);
                             finish();
                             break;
                         case LoggedIn:

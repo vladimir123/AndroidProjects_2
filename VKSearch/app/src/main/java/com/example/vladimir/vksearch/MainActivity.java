@@ -1,5 +1,6 @@
 package com.example.vladimir.vksearch;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,34 +16,24 @@ import com.vk.sdk.util.VKUtil;
 
 import java.util.Arrays;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private String[] scope = new String[]{VKScope.PHOTOS, VKScope.MESSAGES, VKScope.WALL};
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        this.finish();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        finish();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-/*
+
         String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
-        System.out.println(Arrays.asList(fingerprints));
-*/
+        Log.e("VK_FINGERPRINTS", String.valueOf(Arrays.asList(fingerprints)));
+//        System.out.println(Arrays.asList(fingerprints));
 
-//        Toast.makeText(getApplicationContext(), "Logged!", Toast.LENGTH_LONG).show();
-        VKSdk.login(this, scope);
+
+        Log.e("VK_NAINACTIVITY", "onCreate fired");
+
+        if (!VKSdk.isLoggedIn())
+            VKSdk.login(this, scope);
     }
 
     @Override
@@ -51,13 +42,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResult(VKAccessToken res) {
                 // Пользователь успешно авторизовался
-                Toast.makeText(getApplicationContext(), "sucessful", Toast.LENGTH_LONG).show();
                 Log.d("VK_LOGIN", "Access granted");
                 //Transfer VK data to other activity
-//                Intent intent = new Intent(MainActivity.this, Logged.class);
                 Intent intent = new Intent(MainActivity.this, Photos.class);
                 intent.putExtra("res", res.accessToken);
                 startActivity(intent);
+                finish();
             }
             @Override
             public void onError(VKError error) {

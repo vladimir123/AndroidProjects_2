@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:name=".Application"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" android:launchMode="singleTask" android:clearTaskOnLaunch="true" android:screenOrientation="portrait">
+        <activity android:name=".MainActivity" android:theme="@android:style/Theme.NoDisplay" android:launchMode="singleTask" android:clearTaskOnLaunch="true" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />

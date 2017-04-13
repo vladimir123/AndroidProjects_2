@@ -101,19 +101,21 @@ public class Photos extends Activity {
 
             Log.e("VK_CITYGET", String.valueOf(ci.get(0)));
 
-            current_city = ci.get(0).getLocality();
+//            current_city = ci.get(0).getLocality();//real device
+            current_city = "Riga"; //emulator
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
 
+        Log.e("VK_PHOTOS_CITYNAME", current_city);
+
         //get random number for random user from search function
         Random r = new Random();
         if ( ofset == 0 )
             ofset = r.nextInt(80 - 1) + 1;
 
-//        getUsers(ofset, "Riga");
         getUsers(ofset, current_city);
         ofset++;
 

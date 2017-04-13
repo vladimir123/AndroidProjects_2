@@ -23,18 +23,23 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        setContentView(R.layout.activity_main);
+/*
         String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
         Log.e("VK_FINGERPRINTS", String.valueOf(Arrays.asList(fingerprints)));
-//        System.out.println(Arrays.asList(fingerprints));
-
+*/
 
         Log.e("VK_NAINACTIVITY", "onCreate fired");
 
-        if (!VKSdk.isLoggedIn())
+//        if (!VKSdk.isLoggedIn())
             VKSdk.login(this, scope);
     }
+
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        setVisible(false);
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -47,7 +52,7 @@ public class MainActivity extends Activity {
                 Intent intent = new Intent(MainActivity.this, Photos.class);
                 intent.putExtra("res", res.accessToken);
                 startActivity(intent);
-                finish();
+//                finish();
             }
             @Override
             public void onError(VKError error) {

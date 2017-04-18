@@ -92,14 +92,15 @@ public class Photos extends Activity {
         try
         {
 
+            //on emulator need to disable GPS class
+/*
             ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, 1);
 
             GetCity city = new GetCity(getApplicationContext());
             List<Address> ci = city.getCity(getApplicationContext());
 
-//            Toast.makeText(getApplicationContext(), "CITY ON CREATE => "+ci.get(0), Toast.LENGTH_LONG).show();
-
             Log.e("VK_CITYGET", String.valueOf(ci.get(0)));
+*/
 
 //            current_city = ci.get(0).getLocality();//real device
             current_city = "Riga"; //emulator

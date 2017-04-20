@@ -11,8 +11,9 @@
     tools:context="com.example.vladimir.vksearch.MainActivity">
 
     <TextView
+        android:id="@+id/txt_debug"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txt_debug"
-        android:text="Hello World!" />
+        android:text="Hello World!"
+        android:textIsSelectable="true" />
 </RelativeLayout>

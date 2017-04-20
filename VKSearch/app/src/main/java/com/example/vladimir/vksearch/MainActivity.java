@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vk.sdk.VKAccessToken;
@@ -23,9 +24,14 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 /*
+        setContentView(R.layout.activity_main);
+
         String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
+
+        TextView finger = (TextView)findViewById(R.id.txt_debug);
+        finger.setText(String.valueOf(Arrays.asList(fingerprints)));
+
         Log.e("VK_FINGERPRINTS", String.valueOf(Arrays.asList(fingerprints)));
 */
 
@@ -52,7 +58,7 @@ public class MainActivity extends Activity {
                 Intent intent = new Intent(MainActivity.this, Photos.class);
                 intent.putExtra("res", res.accessToken);
                 startActivity(intent);
-//                finish();
+                finish();
             }
             @Override
             public void onError(VKError error) {

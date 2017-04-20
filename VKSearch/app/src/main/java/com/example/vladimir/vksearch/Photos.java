@@ -72,7 +72,26 @@ public class Photos extends Activity {
     public static void setCurrent_city(String current_city) {
         Photos.current_city = current_city;
     }
-
+/*
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                } else {
+                    ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, 1);
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+*/
     @SuppressLint("LongLogTag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,24 +112,27 @@ public class Photos extends Activity {
         {
 
             //on emulator need to disable GPS class
-/*
-            ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, 1);
+
+            Log.e("VK_PHOTOS_GEOCODER", String.valueOf(Geocoder.isPresent()));
 
             GetCity city = new GetCity(getApplicationContext());
             List<Address> ci = city.getCity(getApplicationContext());
 
             Log.e("VK_CITYGET", String.valueOf(ci.get(0)));
-*/
 
-//            current_city = ci.get(0).getLocality();//real device
-            current_city = "Riga"; //emulator
+            current_city = ci.get(0).getLocality();//real device
+
+            Log.e("VK_PHOTOS_CITYNAME", current_city);
+        }
+        catch(NullPointerException ne)
+        {
+            ne.printStackTrace();
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
 
-        Log.e("VK_PHOTOS_CITYNAME", current_city);
 
         //get random number for random user from search function
         Random r = new Random();
@@ -150,8 +172,8 @@ public class Photos extends Activity {
     @SuppressLint("LongLogTag")
     public void getUsers(int ofset, String cityName)
     {
-        Log.e("VK_GETUSERS_OFFSET", String.valueOf(ofset));
-        Log.e("VK_GETUSERS_CURRENTCITY", cityName);
+//        Log.e("VK_GETUSERS_OFFSET", String.valueOf(ofset));
+//        Log.e("VK_GETUSERS_CURRENTCITY", cityName);
 
         final Map<String,String> rez = new HashMap<>();
 

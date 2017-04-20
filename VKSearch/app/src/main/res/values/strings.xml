@@ -6,8 +6,10 @@
     <string name="cancel_button_text">Cancel</string>
     <integer name="com_vk_sdk_AppId">5886074</integer>
     <string name="txt_loading">Loading...</string>
-    <string name="GPSAlertDialogTitle">GPS Settings</string>
-    <string name="GPSAlertDialogMessage">You nedd enable GPS service</string>
-    <string name="action_settings">Ok</string>
-    <string name="cancel">Cancel</string>
+    <string name="gps_not_found_title">Locations are unavailble</string>
+    <string name="gps_not_found_message">Enable LocationService</string>
+    <!--<string name="GPSAlertDialogTitle">GPS Settings</string>-->
+    <!--<string name="GPSAlertDialogMessage">You nedd enable GPS service</string>-->
+    <!--<string name="action_settings">Ok</string>-->
+    <!--<string name="cancel">Cancel</string>-->
 </resources>

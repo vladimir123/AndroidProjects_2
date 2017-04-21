@@ -64,12 +64,13 @@ public class Splash extends Activity {
 
                     switch (res) {
                         case LoggedOut:
-                            startActivity(new Intent(Splash.this, MainActivity.class));
+                            Intent intent_out = new Intent(Splash.this, MainActivity.class);
+                            startActivity(intent_out);
                             finish();
                             break;
                         case LoggedIn:
-                            Intent intent = new Intent(Splash.this, Photos.class);
-                            startActivity(intent);
+                            Intent intent_in = new Intent(Splash.this, Photos.class);
+                            startActivity(intent_in);
                             finish();
                             break;
                         case Pending:

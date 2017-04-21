@@ -3,6 +3,7 @@ package com.example.vladimir.vksearch;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -117,7 +118,9 @@ public class Photos extends Activity {
             GetCity city = new GetCity(getApplicationContext());
             List<Address> ci = city.getCity(getApplicationContext());
 
-            Toast.makeText(getApplicationContext(), "CITY ON CREATE => "+ci.get(0), Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplicationContext(), "CITY ON CREATE => "+ci.get(0), Toast.LENGTH_LONG).show();
+
+            current_city = ci.get(0).getLocality();
 
             Log.e("VK_CITYGET", String.valueOf(ci.get(0)));
         }
@@ -131,7 +134,8 @@ public class Photos extends Activity {
         if ( ofset == 0 )
             ofset = r.nextInt(80 - 1) + 1;
 
-        getUsers(ofset, "Riga");
+//        getUsers(ofset, "Riga");
+        getUsers(ofset, current_city);
         ofset++;
 
     }
@@ -175,6 +179,14 @@ public class Photos extends Activity {
 
         VKRequest search_users = new VKRequest("users.search", VKParameters.from("count", 1, "hometown", cityName, "sex", 1, "status", 6, "offset", ofset, VKApiConst.FIELDS, "photo_max_orig, contacts, last_seen, photo_id"));
 
+
+        //show `Loading` spinner
+        final ProgressDialog progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Loading data");
+        progress.setCancelable(false);
+        progress.show();
+
         search_users.executeWithListener(new VKRequest.VKRequestListener() {
             @SuppressLint("LongLogTag")
             @Override
@@ -216,6 +228,9 @@ public class Photos extends Activity {
 
 
                         getUser(rez);
+
+                        //hide 'Loading' spinner
+                        progress.dismiss();
                     }
                     else
                     {
@@ -257,7 +272,7 @@ public class Photos extends Activity {
                     setLike("photo", user_id, photo_id[1]);
 //                    Photos.getUsers("Riga", ofset);
 
-                    getUsers(ofset, "Riga");
+                    getUsers(ofset, current_city);
                     ofset++;
                 }
             });
@@ -270,7 +285,7 @@ public class Photos extends Activity {
 
                     try
                     {
-                        getUsers(ofset, "Riga");
+                        getUsers(ofset, current_city);
                         ofset++;
                     } catch (Exception e) {
                         e.printStackTrace();

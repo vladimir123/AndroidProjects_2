@@ -20,21 +20,9 @@ public class MainActivity extends AppCompatActivity {
     private String[] scope = new String[]{VKScope.PHOTOS, VKScope.MESSAGES, VKScope.WALL};
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        this.finish();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        finish();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.activity_main);
 
 /*
         String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
@@ -42,7 +30,15 @@ public class MainActivity extends AppCompatActivity {
 */
 
 //        Toast.makeText(getApplicationContext(), "Logged!", Toast.LENGTH_LONG).show();
+        Log.e("VK_MAINACTIVITY", "onCreate fired");
+
         VKSdk.login(this, scope);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setVisible(false);
     }
 
     @Override
@@ -58,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, Photos.class);
                 intent.putExtra("res", res.accessToken);
                 startActivity(intent);
+                finish();
             }
             @Override
             public void onError(VKError error) {

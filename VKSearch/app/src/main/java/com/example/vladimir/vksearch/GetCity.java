@@ -106,6 +106,12 @@ public class GetCity implements LocationListener {
         return null;
     }
 
+    public void stopGPS()
+    {
+        LocationManager locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
+        locationManager.removeUpdates(this);
+    }
+
     @Override
     public void onLocationChanged(Location loc) {
     }

@@ -122,6 +122,8 @@ public class Photos extends Activity {
 
             current_city = ci.get(0).getLocality();
 
+            city.stopGPS();
+
             Log.e("VK_CITYGET", String.valueOf(ci.get(0)));
         }
         catch(Exception e)

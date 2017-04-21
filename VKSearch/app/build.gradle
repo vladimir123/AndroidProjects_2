@@ -8,11 +8,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 2
-<<<<<<< HEAD
-        versionName '3.0-betta'
-=======
         versionName '3.2-betta'
->>>>>>> 4ed911e14c1b3ecc7193f6d623eb3b306a3a5622
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

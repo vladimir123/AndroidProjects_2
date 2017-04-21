@@ -19,7 +19,9 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +43,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.view.View.VISIBLE;
 
 /**
  * Created by Vladimir on 21.02.2017.
@@ -118,20 +121,12 @@ public class Photos extends Activity {
             GetCity city = new GetCity(getApplicationContext());
             List<Address> ci = city.getCity(getApplicationContext());
 
-<<<<<<< HEAD
-=======
 //            Toast.makeText(getApplicationContext(), "CITY ON CREATE => "+ci.get(0), Toast.LENGTH_LONG).show();
 
             current_city = ci.get(0).getLocality();
 
             city.stopGPS();
 
->>>>>>> 4ed911e14c1b3ecc7193f6d623eb3b306a3a5622
-            Log.e("VK_CITYGET", String.valueOf(ci.get(0)));
-
-            current_city = ci.get(0).getLocality();//real device
-
-            Log.e("VK_PHOTOS_CITYNAME", current_city);
         }
         catch(NullPointerException ne)
         {
@@ -148,10 +143,6 @@ public class Photos extends Activity {
         if ( ofset == 0 )
             ofset = r.nextInt(80 - 1) + 1;
 
-<<<<<<< HEAD
-=======
-//        getUsers(ofset, "Riga");
->>>>>>> 4ed911e14c1b3ecc7193f6d623eb3b306a3a5622
         getUsers(ofset, current_city);
         ofset++;
 
@@ -192,10 +183,6 @@ public class Photos extends Activity {
 
         VKRequest search_users = new VKRequest("users.search", VKParameters.from("count", 1, "hometown", cityName, "sex", 1, "status", 6, "offset", ofset, VKApiConst.FIELDS, "photo_max_orig, contacts, last_seen, photo_id"));
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 4ed911e14c1b3ecc7193f6d623eb3b306a3a5622
         //show `Loading` spinner
         final ProgressDialog progress = new ProgressDialog(this);
         progress.setTitle("Loading");
@@ -243,12 +230,9 @@ public class Photos extends Activity {
                         }
                         //show data in content
                         getUser(rez);
-<<<<<<< HEAD
-=======
-
->>>>>>> 4ed911e14c1b3ecc7193f6d623eb3b306a3a5622
                         //hide 'Loading' spinner
                         progress.dismiss();
+//                        progressBar.setVisibility(View.INVISIBLE);
                     }
                     else
                     {

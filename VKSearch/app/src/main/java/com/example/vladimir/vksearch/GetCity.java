@@ -139,12 +139,12 @@ public class GetCity extends Activity implements LocationListener {
         List<Address> addresses;
         try
         {
-            Toast.makeText(mContext, "Lat => "+latitude+" Long => "+longitude, Toast.LENGTH_LONG).show();
+//            Toast.makeText(mContext, "Lat => "+latitude+" Long => "+longitude, Toast.LENGTH_LONG).show();
 
             addresses = gcd.getFromLocation(latitude, longitude, 1);
 
             Log.e("VK_GET_CITY", String.valueOf(addresses));
-
+/*
             if ( addresses.isEmpty() )
             {
                 JSONObject jsonObj = new JSONObject();//parser_Json.getJSONfromURL("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude + "&sensor=true");
@@ -156,7 +156,7 @@ public class GetCity extends Activity implements LocationListener {
                     e.printStackTrace();
                 }
             }
-
+*/
             return addresses;
         }
         catch (IOException e)

@@ -24,8 +24,12 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+<<<<<<< HEAD
 /*
         setContentView(R.layout.activity_main);
+=======
+//        setContentView(R.layout.activity_main);
+>>>>>>> 4ed911e14c1b3ecc7193f6d623eb3b306a3a5622
 
         String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
 
@@ -35,10 +39,17 @@ public class MainActivity extends Activity {
         Log.e("VK_FINGERPRINTS", String.valueOf(Arrays.asList(fingerprints)));
 */
 
+<<<<<<< HEAD
         Log.e("VK_NAINACTIVITY", "onCreate fired");
 
 //        if (!VKSdk.isLoggedIn())
             VKSdk.login(this, scope);
+=======
+//        Toast.makeText(getApplicationContext(), "Logged!", Toast.LENGTH_LONG).show();
+        Log.e("VK_MAINACTIVITY", "onCreate fired");
+
+        VKSdk.login(this, scope);
+>>>>>>> 4ed911e14c1b3ecc7193f6d623eb3b306a3a5622
     }
 
 //    @Override
@@ -46,6 +57,12 @@ public class MainActivity extends Activity {
 //        super.onStart();
 //        setVisible(false);
 //    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setVisible(false);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

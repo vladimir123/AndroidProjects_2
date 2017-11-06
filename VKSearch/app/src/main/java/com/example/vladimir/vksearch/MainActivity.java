@@ -23,7 +23,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.activity_main);
 /*
         String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
         Log.e("VK_FINGERPRINTS", String.valueOf(Arrays.asList(fingerprints)));
@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
                 Intent intent = new Intent(MainActivity.this, Photos.class);
                 intent.putExtra("res", res.accessToken);
                 startActivity(intent);
-//                finish();
+                finish();
             }
             @Override
             public void onError(VKError error) {
